@@ -2,6 +2,7 @@ package com.project.auth_service.demo.models;
 
 public enum UserRole {
     ADMIN("admin"),
+    VET("vet"),
     USER("user");
 
     private String role;

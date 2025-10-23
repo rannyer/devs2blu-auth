@@ -1,7 +1,9 @@
 package com.project.auth_service.demo.controllers;
 
+import com.project.auth_service.demo.infra.security.TokenService;
 import com.project.auth_service.demo.models.User;
 import com.project.auth_service.demo.models.dtos.AuthenticationDTO;
+import com.project.auth_service.demo.models.dtos.LoginResponseDTO;
 import com.project.auth_service.demo.models.dtos.RegisterDTO;
 import com.project.auth_service.demo.repositories.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -18,19 +20,20 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final TokenService tokenService;
 
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository){
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, TokenService tokenService){
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody AuthenticationDTO dto){
         var userPassword = new UsernamePasswordAuthenticationToken(dto.login(), dto.password());
         var auth = authenticationManager.authenticate(userPassword);
-        System.out.println(auth.getAuthorities());
-
-        return  ResponseEntity.ok().build();
+        String token = tokenService.generateToken((User) auth.getPrincipal());
+        return  ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/register")
