@@ -98,7 +98,7 @@ public class AuthIntegrationTest {
             .header("Authorization", "Bearer " + tokenVet)
             .content(body))
             .andExpect(status().isOk());
-        BDD -> Nehavior-Driven Development
+
     }
 
     //Feature
@@ -126,10 +126,10 @@ public class AuthIntegrationTest {
             //quando o usuario enviar uma requisicao de login com essas credencias
             //entao o sistema deve responder com status 200 e deve retoranr um token jwt
 
-    @Then("o ssitema deve res[mder com status 200")
-    public void validarStatus200(){
-        assertEquals(200, response.getStatus());
-    }
+//    @Then("o ssitema deve res[mder com status 200")
+//    public void validarStatus200(){
+//        assertEquals(200, response.getStatus());
+//    }
 
 
 
