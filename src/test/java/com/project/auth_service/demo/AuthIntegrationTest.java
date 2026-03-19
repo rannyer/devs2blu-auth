@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -91,10 +92,48 @@ public class AuthIntegrationTest {
             }
             """;
 
+
         mockMvc.perform(post("/animais")
             .contentType("application/json")
             .header("Authorization", "Bearer " + tokenVet)
             .content(body))
             .andExpect(status().isOk());
+        BDD -> Nehavior-Driven Development
     }
+
+    //Feature
+    //Scenario
+    //Given
+    //When
+    //Then
+
+    //gherkin -> linguagem de domínio específico para escrever testes de aceitação
+    // Funcionalidade: Login do sistema
+    // Cenário: Login com sucesso
+    // Dado (considerando) que existe um usuario cadastro
+    //Quando ele informar o login e senha validos
+    //Entao o sistema de retornar com sucesso
+
+    //Feature: System Login
+    //Scenario: Successfull login
+        //Given a registered user exsists
+        //When the user provides valid login and password
+        //Then the system should return a success response
+
+    //Feature: login da api
+        // Cenario: Login com credencias validas
+            //dado que existe um usuario com login "admin" e senha "123445"
+            //quando o usuario enviar uma requisicao de login com essas credencias
+            //entao o sistema deve responder com status 200 e deve retoranr um token jwt
+
+    @Then("o ssitema deve res[mder com status 200")
+    public void validarStatus200(){
+        assertEquals(200, response.getStatus());
+    }
+
+
+
+
+
+
 }
