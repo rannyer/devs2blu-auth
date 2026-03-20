@@ -35,27 +35,27 @@ public class AuthSteps {
     private Map<String, Object> requestBody;
     private MvcResult response;
     private Map<String, Object> loginBody;
+    @Autowired
+    private TextContext textContext;
 
     @Given("a user exists with login {string} and password {string} and role {string}")
     public void aUserExistsWithLoginAndPassword(String login, String password, String role) throws Exception{
-        requestBody = new HashMap<>();
-        requestBody.put("login", login);
-        requestBody.put("password", password);
-        requestBody.put("role", role);
+        textContext.getRegisterBody().put("login", login);
+        textContext.getRegisterBody().put("password", password);
+        textContext.getRegisterBody().put("role", role);
 
         mockMvc.perform(post("/auth/register")
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(requestBody)))
+                .content(objectMapper.writeValueAsString(textContext.getRegisterBody())))
                 .andReturn();
     }
 
     @When("the user sends a POST request to {string} with the credentials")
     public void theUserSendsAPOSTRequestToWithTheCredentials(String endpoint) throws Exception {
-        requestBody.remove("role");
-        response = mockMvc.perform(post(endpoint)
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(requestBody)))
-            .andReturn();
+        textContext.setResponse(mockMvc.perform(post(endpoint)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(textContext.getRegisterBody())))
+                .andReturn());
     }
     @When("the user sends a POST request to {string} with the credentials {string} and password {string}")
     public void theUserSendsAPostRequestWIthLoginAndPassword(String endpoint, String login, String password) throws Exception {
@@ -63,10 +63,10 @@ public class AuthSteps {
         loginBody.put("login", login);
         loginBody.put("password", password);
 
-        response = mockMvc.perform(post(endpoint)
+        textContext.setResponse(mockMvc.perform(post(endpoint)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(loginBody)))
-                .andReturn();
+                .andReturn());
     }
 
     @When("a user sends a POST request to {string} with login {string}, password {string}, and role {string}")
@@ -76,21 +76,17 @@ public class AuthSteps {
         body.put("password", password);
         body.put("role",role);
 
-        response = mockMvc.perform(post(endpoint)
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(body)))
-                .andReturn();
+        textContext.setResponse(mockMvc.perform(post(endpoint)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(body)))
+                .andReturn());
 
-        System.out.println("REGISTER STATUS: " + response.getResponse().getStatus());
-        System.out.println("REGISTER BODY: "+response.getResponse().getContentAsString());
-
-    }
-
-    @Then("the response status code should be {int}")
-    public void theResponseStatusShouldBe(Integer status) throws Exception {
-        assertEquals(status.intValue(), response.getResponse().getStatus());
+        System.out.println("REGISTER STATUS: " + textContext.getResponse().getResponse().getStatus());
+        System.out.println("REGISTER BODY: "+textContext.getResponse().getResponse().getContentAsString());
 
     }
+
+
 
 
 }
