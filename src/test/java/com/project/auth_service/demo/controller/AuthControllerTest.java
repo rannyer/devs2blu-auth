@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import static org.hamcrest.Matchers.notNullValue;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AuthControllerTest {
 
@@ -73,6 +75,97 @@ public class AuthControllerTest {
 
     }
 
+    @Test
+    void deveRetornarErroQuandoSenhaEstiverIncorreta(){
+        String registerPayload = """
+                {
+                    "login": "javeteri",
+                    "password": "123",
+                    "role": "VET"
+                }
+                """;
+        RestAssured
+                .given()
+                .body(registerPayload)
+                .contentType("application/json")
+                .when()
+                .post("/auth/register")
+                .then()
+                .statusCode(200);
+
+        String payloadLogin = """
+                   {
+                    "login": "javeteri",
+                    "password": "1234"
+                   }
+                """;
+
+        RestAssured.given()
+                        .contentType("application/json")
+                        .body(payloadLogin)
+                    .when()
+                        .post("/auth/login")
+                    .then()
+                        .statusCode(403)
+                    .log().all();
+    }
+    @Test
+    void deveRetornarTokeNoLogin(){
+        String registerPayload = """
+                {
+                    "login": "javeteri",
+                    "password": "123",
+                    "role": "VET"
+                }
+                """;
+        RestAssured
+                .given()
+                .body(registerPayload)
+                .contentType("application/json")
+                .when()
+                .post("/auth/register")
+                .then()
+                .statusCode(200);
+
+        String payloadLogin = """
+                   {
+                    "login": "javeteri",
+                    "password": "123"
+                   }
+                """;
+        RestAssured
+                .given()
+                    .contentType("application/json")
+                    .body(payloadLogin)
+                .when()
+                    .post("/auth/login")
+                .then()
+                    .statusCode(200)
+                    .body("token", notNullValue());
+    }
+
+    @Test
+    void deveBloquearAcessoSemToken(){
+        RestAssured
+                .given()
+                .when()
+                    .get("/animais")
+                .then()
+                    .statusCode(403)
+                    .log().all();
+    }
+
+    @Test
+    void deveBloquearTokenInvalida(){
+        RestAssured
+                .given()
+                   .header("Authorization", "Bearer tokenFake")
+                .when()
+                   .get("/animais")
+                .then()
+                    .statusCode(403)
+                    .log().all();
+        }
 
 
 
