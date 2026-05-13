@@ -5,6 +5,7 @@ import com.project.auth_service.demo.models.User;
 import com.project.auth_service.demo.models.dtos.AuthenticationDTO;
 import com.project.auth_service.demo.models.dtos.LoginResponseDTO;
 import com.project.auth_service.demo.models.dtos.RegisterDTO;
+import com.project.auth_service.demo.models.dtos.UserMe;
 import com.project.auth_service.demo.repositories.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,10 @@ public class AuthController {
         User user =  new User(dto.login(), encryptedPassword, dto.role());
         userRepository.save(user);
         return ResponseEntity.ok().build();
-
+    }
+    @GetMapping("users/me")
+    public ResponseEntity getUsers(){
+        UserMe teste = new UserMe(1L, "Silvia Spring", "Sisi@gmail.com");
+        return ResponseEntity.ok(teste);
     }
 }
