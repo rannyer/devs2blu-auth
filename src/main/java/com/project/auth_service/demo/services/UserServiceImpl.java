@@ -31,15 +31,28 @@ public class UserServiceImpl implements UserService {
         List<String> errors = validate(dto);
         if (!errors.isEmpty()) return Result.failure(errors);
 
-        String email = dto.email().trim().toLowerCase();
-        if (userRepository.findByLogin(email) != null) return Result.failure("Email is already in use");
-
-        UserRole role = dto.role() != null ? dto.role() : UserRole.USER;
-        User user = new User(email, passwordEncoder.encode(dto.password()), role);
-        return Result.success(userRepository.save(user));
+        return Result.success(persist(dto));
     }
 
     private List<String> validate(CreateUserDTO dto) {
+        List<String> errors = validateInput(dto);
+        if (errors.isEmpty() && userRepository.existsByLogin(normalizeEmail(dto.email()))) {
+            errors.add("Email is already in use");
+        }
+        return errors;
+    }
+
+    private User persist(CreateUserDTO dto) {
+        UserRole role = dto.role() != null ? dto.role() : UserRole.USER;
+        User user = new User(normalizeEmail(dto.email()), passwordEncoder.encode(dto.password()), role);
+        return userRepository.save(user);
+    }
+
+    private static String normalizeEmail(String email) {
+        return email.trim().toLowerCase();
+    }
+
+    private List<String> validateInput(CreateUserDTO dto) {
         List<String> errors = new ArrayList<>();
         if (dto == null) {
             errors.add("Request body is required");

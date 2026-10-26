@@ -1,6 +1,6 @@
 package com.project.auth_service.demo.controller;
 
-import com.project.auth_service.demo.repositories.UserRepository;
+import com.project.auth_service.demo.repositories.jpa.UserJpaRepository;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ public class AuthControllerTest {
     private int port;
 
     @Autowired
-    private UserRepository repository;
+    private UserJpaRepository repository;
 
     @BeforeEach
     void setUp() {
